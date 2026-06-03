@@ -1,0 +1,37 @@
+name: Daily GitHub Trend Analysis
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ai_study 코드 가져오기
+        uses: actions/checkout@v4
+        with:
+          repository: nmmm9/ai_study
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: |
+          cd week13-evaluation/juwon/backend
+          pip install -r requirements.txt
+
+      - name: 분석 실행
+        env:
+          OPENAI_API_KEY:     ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN:       ${{ secrets.GH_TOKEN }}
+          GMAIL_USER:         ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GITHUB_TREND_REPO:  yoonjuwon0618-crypto/trend-reports
+          MY_GITHUB_USERNAME: yoonjuwon0618
+        run: |
+          cd week13-evaluation/juwon/backend
+          python run_daily.py
